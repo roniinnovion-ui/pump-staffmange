@@ -1,8 +1,8 @@
-import { Fingerprint } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api, isDemoMode } from "../services/api.js";
 import { Button, Input } from "../components/ui.jsx";
+import { brandName, logoUrl } from "../config/brand.js";
 
 export default function Login() {
   const [form, setForm] = useState({ username: "admin", password: "admin123" });
@@ -38,9 +38,9 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-slate-100 px-4 dark:bg-slate-950">
       <form onSubmit={submit} className="w-full max-w-sm rounded border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded bg-fuel text-white"><Fingerprint /></div>
+          <img src={logoUrl} alt={`${brandName} logo`} className="h-16 w-16 rounded object-cover ring-2 ring-fuel/20" />
           <div>
-            <h1 className="text-xl font-semibold dark:text-white">Attendance Pro</h1>
+            <h1 className="text-xl font-semibold dark:text-white">{brandName}</h1>
             <p className="text-sm text-slate-500">Secure admin login</p>
           </div>
         </div>
