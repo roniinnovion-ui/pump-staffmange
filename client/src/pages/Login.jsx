@@ -5,16 +5,18 @@ import { Button, Input } from "../components/ui.jsx";
 import { brandName, logoUrl } from "../config/brand.js";
 
 export default function Login() {
-  const [form, setForm] = useState({ username: "admin", password: "admin123" });
+  const demoUsername = "ghoshbrothers";
+  const demoPassword = "Nxghosh@$45";
+  const [form, setForm] = useState({ username: demoUsername, password: demoPassword });
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
   async function submit(e) {
     e.preventDefault();
     setError("");
-    if (isDemoMode && form.username === "admin" && form.password === "admin123") {
+    if (isDemoMode && form.username === demoUsername && form.password === demoPassword) {
       localStorage.setItem("token", "demo-token");
-      localStorage.setItem("user", JSON.stringify({ username: "admin", role: "Super Admin" }));
+      localStorage.setItem("user", JSON.stringify({ username: demoUsername, role: "Super Admin" }));
       navigate("/");
       return;
     }
@@ -24,9 +26,9 @@ export default function Login() {
       localStorage.setItem("user", JSON.stringify(data.user));
       navigate("/");
     } catch (err) {
-      if (form.username === "admin" && form.password === "admin123") {
+      if (form.username === demoUsername && form.password === demoPassword) {
         localStorage.setItem("token", "demo-token");
-        localStorage.setItem("user", JSON.stringify({ username: "admin", role: "Super Admin" }));
+        localStorage.setItem("user", JSON.stringify({ username: demoUsername, role: "Super Admin" }));
         navigate("/");
         return;
       }

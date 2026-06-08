@@ -38,8 +38,8 @@ npm run dev
 
 Default login:
 
-- Username: `admin`
-- Password: `admin123`
+- Username: `ghoshbrothers`
+- Password: `Nxghosh@$45`
 
 ## Biometric Test
 

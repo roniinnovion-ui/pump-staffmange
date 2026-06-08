@@ -12,8 +12,8 @@ await connectDb();
 
 await Promise.all([User.deleteMany({}), Shift.deleteMany({}), Pump.deleteMany({}), Staff.deleteMany({})]);
 
-const passwordHash = await bcrypt.hash("admin123", 10);
-await User.create({ username: "admin", passwordHash, role: "Super Admin" });
+const passwordHash = await bcrypt.hash("Nxghosh@$45", 10);
+await User.create({ username: "ghoshbrothers", passwordHash, role: "Super Admin" });
 await User.create({ username: "manager", passwordHash, role: "Manager" });
 
 const morning = await Shift.create({ name: "Morning Shift", startTime: "06:00", endTime: "18:00" });
@@ -26,5 +26,5 @@ await Staff.create([
   { name: "Sanjay Pal", mobile: "9000000003", address: "North Block", designation: "Supervisor", fingerprintId: "FP1003", assignedShift: night._id, assignedPump: pumps[2]._id, joiningDate: new Date("2024-11-20"), shiftHistory: [{ shift: night._id, pump: pumps[2]._id, note: "Initial assignment" }] }
 ]);
 
-console.log("Seed complete. Login admin/admin123");
+console.log("Seed complete. Login ghoshbrothers/Nxghosh@$45");
 process.exit(0);
