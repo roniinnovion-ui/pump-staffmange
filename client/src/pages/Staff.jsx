@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Badge, Button, Card, Input, Select } from "../components/ui.jsx";
 import { api, deleteMockStaff, getOrMock, saveMockStaff } from "../services/api.js";
 
-const empty = { name: "", mobile: "", address: "", designation: "", fingerprintId: "", assignedShift: "", assignedPump: "", joiningDate: "" };
+const empty = { name: "", mobile: "", designation: "", fingerprintId: "", assignedShift: "", assignedPump: "", joiningDate: "" };
 
 export default function Staff() {
   const [staff, setStaff] = useState([]);
@@ -48,7 +48,6 @@ export default function Staff() {
           <form onSubmit={save} className="space-y-3">
             <Input placeholder="Staff Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
             <Input placeholder="Mobile Number" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} required />
-            <Input placeholder="Address" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
             <Input placeholder="Designation" value={form.designation} onChange={(e) => setForm({ ...form, designation: e.target.value })} required />
             <Input placeholder="Fingerprint ID" value={form.fingerprintId} onChange={(e) => setForm({ ...form, fingerprintId: e.target.value })} required />
             <Select value={form.assignedShift} onChange={(e) => setForm({ ...form, assignedShift: e.target.value })} required>
