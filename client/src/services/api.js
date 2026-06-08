@@ -99,6 +99,29 @@ function demoAttendance() {
   ]);
 }
 
+function minutesBetween(start, end) {
+  if (!start || !end) return 0;
+  return Math.max(0, Math.round((new Date(end) - new Date(start)) / 60000));
+}
+
+function recalculateAttendance(row) {
+  const lunchMinutes = minutesBetween(row.lunchOut, row.lunchIn);
+  const totalMinutes = minutesBetween(row.joinDuty, row.exitDuty);
+  const netWorkingMinutes = row.exitDuty ? Math.max(0, totalMinutes - lunchMinutes) : Math.max(row.netWorkingMinutes || 0, 0);
+  const shiftStart = row.shiftName === "Night Shift" ? `${row.date}T18:00:00` : `${row.date}T06:00:00`;
+  const shiftEndDate = row.shiftName === "Night Shift" ? new Date(new Date(`${row.date}T00:00:00`).getTime() + 86400000).toISOString().slice(0, 10) : row.date;
+  const shiftEnd = row.shiftName === "Night Shift" ? `${shiftEndDate}T06:00:00` : `${row.date}T18:00:00`;
+  return {
+    ...row,
+    lunchMinutes,
+    totalDutyMinutes: totalMinutes,
+    netWorkingMinutes,
+    lateMinutes: row.joinDuty ? Math.max(0, minutesBetween(shiftStart, row.joinDuty)) : 0,
+    earlyExitMinutes: row.exitDuty ? Math.max(0, minutesBetween(row.exitDuty, shiftEnd)) : 0,
+    status: row.exitDuty ? "Off Duty" : row.lunchOut && !row.lunchIn ? "On Lunch Break" : row.joinDuty ? "On Duty" : "Off Duty"
+  };
+}
+
 export function mockFor(path) {
   if (path.startsWith("/staff")) return demoStaff();
   if (path.startsWith("/shifts")) return demoShifts();
@@ -183,6 +206,18 @@ export function saveMockPump(payload, id) {
   const list = demoPumps();
   const updated = id ? list.map((item) => item._id === id ? { ...item, ...payload } : item) : [{ ...payload, _id: `pump-${Date.now()}`, active: true }, ...list];
   writeStore("demo_pumps", updated);
+  return updated;
+}
+
+export function saveMockAttendance(id, payload) {
+  const updated = demoAttendance().map((item) => item._id === id ? recalculateAttendance({ ...item, ...payload }) : item);
+  writeStore("demo_attendance", updated);
+  return updated;
+}
+
+export function deleteMockAttendance(id) {
+  const updated = demoAttendance().filter((item) => item._id !== id);
+  writeStore("demo_attendance", updated);
   return updated;
 }
 

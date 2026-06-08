@@ -53,5 +53,9 @@ router.put("/:id/correct", async (req, res, next) => {
   }
 });
 
-export default router;
+router.delete("/:id", async (req, res) => {
+  await Attendance.findByIdAndDelete(req.params.id);
+  res.json({ message: "Attendance deleted" });
+});
 
+export default router;
