@@ -21,7 +21,8 @@ export default function Dashboard() {
     ["On Duty", summary.cards.staffOnDuty],
     ["On Lunch", summary.cards.staffOnLunch],
     ["Late Entries", summary.cards.lateEntriesToday],
-    ["Early Exits", summary.cards.earlyExitsToday]
+    ["Early Exits", summary.cards.earlyExitsToday],
+    ["Pending Attendance", summary.cards.pendingAttendance || 0]
   ];
 
   return (

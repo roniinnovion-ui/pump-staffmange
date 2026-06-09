@@ -64,6 +64,14 @@ function today() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function minutesFromNow(dateTime) {
+  return Math.floor((new Date() - new Date(dateTime)) / 60000);
+}
+
+function shiftStartForToday(shift) {
+  return `${today()}T${shift?.startTime || "06:00"}:00`;
+}
+
 function demoAttendance() {
   return readStore("demo_attendance", [
     {
@@ -99,6 +107,26 @@ function demoAttendance() {
   ]);
 }
 
+export function demoPendingAttendance() {
+  const attendance = demoAttendance();
+  const joinedNames = new Set(attendance.filter((item) => item.joinDuty).map((item) => item.staffName));
+  return demoStaff()
+    .filter((person) => person.active !== false)
+    .map((person) => {
+      const shiftStart = shiftStartForToday(person.assignedShift);
+      const lateByMinutes = minutesFromNow(shiftStart);
+      return {
+        staff: person._id,
+        name: person.name,
+        shift: person.assignedShift?.name,
+        pumpNumber: person.assignedPump?.number,
+        shiftStart,
+        lateByMinutes
+      };
+    })
+    .filter((person) => !joinedNames.has(person.name) && person.lateByMinutes >= 60);
+}
+
 function minutesBetween(start, end) {
   if (!start || !end) return 0;
   return Math.max(0, Math.round((new Date(end) - new Date(start)) / 60000));
@@ -128,6 +156,7 @@ export function mockFor(path) {
   if (path.startsWith("/pumps")) return demoPumps();
   if (path.startsWith("/attendance/live-status")) {
     const attendance = demoAttendance();
+    const pendingIds = new Set(demoPendingAttendance().map((item) => item.staff));
     return demoStaff().map((person) => {
       const row = attendance.find((item) => item.staffName === person.name);
       return {
@@ -135,14 +164,16 @@ export function mockFor(path) {
         name: person.name,
         shift: person.assignedShift?.name,
         pumpNumber: person.assignedPump?.number,
-        status: row?.status || "Off Duty"
+        status: pendingIds.has(person._id) ? "Pending Attendance" : row?.status || "Off Duty"
       };
     });
   }
+  if (path.startsWith("/notifications/pending-attendance")) return demoPendingAttendance();
   if (path.startsWith("/reports/daily") || path.startsWith("/attendance")) return demoAttendance();
   if (path.startsWith("/dashboard/summary")) {
     const attendance = demoAttendance();
     const staff = demoStaff();
+    const pendingAttendance = demoPendingAttendance();
     return {
       cards: {
         totalStaff: staff.length,
@@ -153,7 +184,8 @@ export function mockFor(path) {
         staffOnDuty: attendance.filter((item) => item.status === "On Duty").length,
         staffOnLunch: attendance.filter((item) => item.status === "On Lunch Break").length,
         lateEntriesToday: attendance.filter((item) => item.lateMinutes > 0).length,
-        earlyExitsToday: attendance.filter((item) => item.earlyExitMinutes > 0).length
+        earlyExitsToday: attendance.filter((item) => item.earlyExitMinutes > 0).length,
+        pendingAttendance: pendingAttendance.length
       },
       charts: {
         dailyAttendance: [{ name: "Present", value: attendance.length }, { name: "Absent", value: Math.max(0, staff.length - attendance.length) }],

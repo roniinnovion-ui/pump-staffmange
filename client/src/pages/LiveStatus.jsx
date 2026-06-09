@@ -6,6 +6,7 @@ import { getOrMock } from "../services/api.js";
 function tone(status) {
   if (status === "On Duty") return "green";
   if (status === "On Lunch Break") return "yellow";
+  if (status === "Pending Attendance") return "yellow";
   return "red";
 }
 
