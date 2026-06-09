@@ -18,7 +18,8 @@ await User.create({ username: "manager", passwordHash, role: "Manager" });
 
 const morning = await Shift.create({ name: "Morning Shift", startTime: "06:00", endTime: "18:00" });
 const night = await Shift.create({ name: "Night Shift", startTime: "18:00", endTime: "06:00" });
-const pumps = await Pump.insertMany(Array.from({ length: 6 }, (_, i) => ({ number: String(i + 1), label: `Pump ${i + 1}` })));
+const pumpNumbers = ["1", "2", "3", "5", "6", "8", "13", "16"];
+const pumps = await Pump.insertMany(pumpNumbers.map((number) => ({ number, label: `Pump ${number}` })));
 
 await Staff.create([
   { name: "Rahul Das", mobile: "9000000001", address: "Station Road", designation: "Nozzleman", fingerprintId: "FP1001", assignedShift: morning._id, assignedPump: pumps[0]._id, joiningDate: new Date("2025-01-10"), shiftHistory: [{ shift: morning._id, pump: pumps[0]._id, note: "Initial assignment" }] },

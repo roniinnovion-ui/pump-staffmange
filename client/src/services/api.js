@@ -23,10 +23,12 @@ const shifts = [
   { _id: "shift-night", name: "Night Shift", startTime: "18:00", endTime: "06:00", active: true }
 ];
 
-const pumps = Array.from({ length: 6 }, (_, index) => ({
-  _id: `pump-${index + 1}`,
-  number: String(index + 1),
-  label: `Pump ${index + 1}`,
+const defaultPumpNumbers = ["1", "2", "3", "5", "6", "8", "13", "16"];
+
+const pumps = defaultPumpNumbers.map((number) => ({
+  _id: `pump-${number}`,
+  number,
+  label: `Pump ${number}`,
   active: true
 }));
 
@@ -57,7 +59,12 @@ export function demoShifts() {
 }
 
 export function demoPumps() {
-  return readStore("demo_pumps", pumps);
+  const stored = readStore("demo_pumps", pumps);
+  const storedNumbers = new Set(stored.map((pump) => pump.number));
+  const missing = pumps.filter((pump) => !storedNumbers.has(pump.number));
+  const merged = [...stored, ...missing].sort((a, b) => Number(a.number) - Number(b.number));
+  if (missing.length) writeStore("demo_pumps", merged);
+  return merged;
 }
 
 function today() {
